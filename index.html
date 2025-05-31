@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ERP System - Maintenance Module</title>
+  <style>
+    :root {
+      --primary-color: #2e86de;
+      --secondary-color: #f39c12;
+      --background-color: #f4f6f8;
+      --text-color: #34495e;
+      --card-bg: #ffffff;
+      --border-radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--background-color);
+      color: var(--text-color);
+      position: relative;
+      z-index: 1;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: url('PT_Mesin.jpg') center center/cover no-repeat;
+      filter: blur(5px);
+      opacity: 0.75;
+      pointer-events: none;
+    }
+
+    body>* {
+      position: relative;
+      z-index: 1;
+    }
+
+    header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+      position: relative;
+    }
+
+    .header-title-logo {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      justify-content: flex-start;
+      flex: 1;
+    }
+
+    .header-logo img {
+      width: 35px;
+      display: block;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin: 0;
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+    }
+
+    nav button {
+      background: transparent;
+      border: none;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: var(--border-radius);
+      transition: background-color 0.3s ease;
+    }
+
+    nav button:hover,
+    nav button.active {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    main {
+      padding: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      color: var(--primary-color);
+      color: #ffffff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.95rem;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      text-align: left;
+      padding: 0.4rem 0.5rem;
+    }
+
+    th {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+
+    button.action-btn {
+      background-color: var(--primary-color);
+      border: none;
+      color: white;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    button.action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    button.action-btn:hover:not(:disabled) {
+      background-color: #1b4f72;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      flex: 1 1 200px;
+    }
+
+    input,
+    select,
+    textarea {
+      margin-top: 0.3rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: var(--border-radius);
+      border: 1px solid #ccc;
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .status {
+      font-weight: 700;
+      padding: 0.2rem 0.4rem;
+      border-radius: var(--border-radius);
+      color: white;
+      display: inline-block;
+      font-size: 0.85rem;
+    }
+
+    .status.pending {
+      background-color: #d35400;
+    }
+
+    .status.completed {
+      background-color: #27ae60;
+    }
+
+    .status.inprogress {
+      background-color: #2980b9;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #operations .summary-boxes {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      margin-bottom: 1rem;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    #operations .summary-box {
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .summary-boxes {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .summary-box {
+      flex: 1 1 220px;
+      background: var(--primary-color);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+      text-align: center;
+    }
+
+    .summary-box h3 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+
+    .summary-box p {
+      margin: 0;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    footer {
+      margin-top: 4rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #777;
+    }
+
+    /* Scroll container for tables on small screens */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        padding: 1rem;
+      }
+
+      .summary-boxes {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+        width: 100%;
+        margin-bottom: 1rem;
+      }
+
+      .summary-box {
+        min-width: 0;
+        width: 100%;
+        font-size: 1rem;
+      }
+
+      h2 {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1rem;
+      }
+
+      nav {
+        width: 100%;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+      }
+
+      main {
+        padding: 0.5rem;
+      }
+
+      .card {
+        padding: 0.7rem;
+      }
+
+      h2 {
+        font-size: 1.1rem;
+      }
+
+      .summary-box h3 {
+        font-size: 1.1rem;
+      }
+
+      table,
+      th,
+      td {
+        font-size: 0.85rem;
+      }
+
+      label {
+        font-size: 0.85rem;
+      }
+
+      input,
+      select,
+      textarea {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="header-title-logo">
+      <div class="header-logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/80/Logo-UNY-Corel-terbaru.png" alt="Logo UNY" />
+      </div>
+      <h1>
+        ERP System <small style="font-weight:normal; font-size: 1rem; color:#dcdcdc;">- Maintenance Module</small>
+      </h1>
+    </div>
+    <nav>
+      <button class="nav-btn active" data-page="maintenance">Maintenance</button>
+      <button class="nav-btn" data-page="inventory">Inventory</button>
+      <button class="nav-btn" data-page="finance">Finance</button>
+      <button class="nav-btn" data-page="operations">Operations</button>
+      <button id="logout-btn" style="background:#c0392b; margin-left:1rem;">Logout</button>
+    </nav>
+  </header>
+  <main>
+    <!-- Maintenance Module -->
+    <section id="maintenance" class="page-section">
+      <h2>Maintenance Management</h2>
+
+      <div class="card summary-boxes">
+        <div class="summary-box" id="total-maintenance">
+          <h3>0</h3>
+          <p>Total Maintenance Tasks</p>
+        </div>
+        <div class="summary-box" id="pending-maintenance">
+          <h3>0</h3>
+          <p>Pending Tasks</p>
+        </div>
+        <div class="summary-box" id="completed-maintenance">
+          <h3>0</h3>
+          <p>Completed Tasks</p>
+        </div>
+        <div class="summary-box" id="total-maintenance-cost">
+          <h3>Rp 0</h3>
+          <p>Total Maintenance Cost</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Maintenance Tasks</h3>
+        <div class="table-container">
+          <table id="maintenance-table">
+            <thead>
+              <tr>
+                <th>Asset</th>
+                <th>Description</th>
+                <th>Scheduled Date</th>
+                <th>Status</th>
+                <th>Cost (Rp)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- maintenance tasks rows go here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Add New Maintenance Task</h3>
+        <form id="maintenance-form">
+          <label>
+            Asset Name
+            <input type="text" id="asset-name" required placeholder="Asset name or identifier" />
+          </label>
+          <label>
+            Description
+            <textarea id="maintenance-desc" rows="2" placeholder="Describe maintenance task" required></textarea>
+          </label>
+          <label>
+            Scheduled Date
+            <input type="date" id="maintenance-date" required />
+          </label>
+          <label>
+            Cost (Rp)
+            <input type="number" id="maintenance-cost" min="0" value="0" required />
+          </label>
+          <label>
+            Status
+            <select id="maintenance-status" required>
+              <option value="pending" selected>Pending</option>
+              <option value="inprogress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </label>
+          <div style="flex-basis: 100%; text-align: right;">
+            <button type="submit" class="action-btn">Add Task</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Inventory Module -->
+    <section id="inventory" class="page-section" style="display:none;">
+      <h2>Inventory and Spare Parts Management</h2>
+
+      <div class="card summary-boxes">
+        <div class="summary-box" id="total-parts">
+          <h3>0</h3>
+          <p>Total Spare Parts</p>
+        </div>
+        <div class="summary-box" id="total-stock">
+          <h3>0</h3>
+          <p>Total Stock Quantity</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Spare Parts Inventory</h3>
+        <div class="table-container">
+          <table id="inventory-table">
+            <thead>
+              <tr>
+                <th>Part Name</th>
+                <th>Part Number</th>
+                <th>Stock Qty</th>
+                <th>Unit Price (Rp)</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- inventory parts rows go here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Add / Update Spare Part</h3>
+        <form id="inventory-form">
+          <label>
+            Part Name
+            <input type="text" id="part-name" required placeholder="Part name" />
+          </label>
+          <label>
+            Part Number
+            <input type="text" id="part-number" required placeholder="Unique part number" />
+          </label>
+          <label>
+            Stock Quantity
+            <input type="number" id="stock-qty" min="0" value="0" required />
+          </label>
+          <label>
+            Unit Price (Rp)
+            <input type="number" id="unit-price" min="0" value="0" required />
+          </label>
+          <div style="flex-basis: 100%; text-align: right;">
+            <button type="submit" class="action-btn">Add / Update Part</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Finance Module -->
+    <section id="finance" class="page-section" style="display:none;">
+      <h2>Financial Overview</h2>
+
+      <div class="card">
+        <h3>Maintenance Cost Summary</h3>
+        <p>Total maintenance cost is aggregated from maintenance data.</p>
+        <div class="summary-boxes" style="max-width: 600px; margin-top: 1rem;">
+          <div class="summary-box" id="finance-total-cost" style="background-color: #16a085;">
+            <h3>Rp 0</h3>
+            <p>Total Maintenance Cost</p>
+          </div>
+          <div class="summary-box" id="finance-monthly-cost" style="background-color: #27ae60;">
+            <h3>Rp 0</h3>
+            <p>This Month's Cost</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Finance Notes</h3>
+        <textarea id="finance-notes" rows="5" placeholder="Add notes related to maintenance finances..."
+          style="width:100%;border-radius: var(--border-radius);border:1px solid #ccc;padding:0.5rem; font-size: 1rem;"></textarea>
+        <div style="text-align:right; margin-top: 0.5rem;">
+          <button class="action-btn" id="save-finance-notes">Save Notes</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Operations Module -->
+    <section id="operations" class="page-section" style="display:none;">
+      <h2>Operations Overview</h2>
+      <div class="card">
+        <p style="color: #000000;">This dashboard summarizes operational status integrating maintenance insights.</p>
+
+        <div class="card summary-boxes" id="operations-summary-boxes">
+          <div class="summary-box" style="background-color: #e67e22;">
+            <h3 id="op-in-progress">0</h3>
+            <p>Maintenance In Progress</p>
+          </div>
+          <div class="summary-box" style="background-color: #2980b9;">
+            <h3 id="op-completed">0</h3>
+            <p>Maintenance Completed</p>
+          </div>
+          <div class="summary-box" style="background-color: #c0392b;">
+            <h3 id="op-pending">0</h3>
+            <p>Maintenance Pending</p>
+          </div>
+          <div class="summary-box" style="background-color: #34495e;">
+            <h3 id="op-available-stock">0</h3>
+            <p>Available Spare Parts</p>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="card">
+        <h3>Operations Notes</h3>
+        <textarea id="operations-notes" rows="5" placeholder="Add notes related to operations and maintenance..."
+          style="width:100%; border-radius: var(--border-radius); border:1px solid #ccc; padding:0.5rem; font-size: 1rem;"></textarea>
+        <div style="text-align:right; margin-top: 0.5rem;">
+          <button class="action-btn" id="save-operations-notes">Save Notes</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+  <footer>
+    &copy; 2025 ERP Maintenance Management System
+  </footer>
+
+  <script>
+
+    // Cek status login
+    if (localStorage.getItem('erp_logged_in') !== 'true') {
+      window.location.href = 'login.html';
+    }
+
+    // Data storage - simulate persistent storage with localStorage
+    const STORAGE_KEYS = {
+      maintenanceTasks: 'erp_maintenanceTasks',
+      inventory: 'erp_inventoryParts',
+      financeNotes: 'erp_financeNotes',
+      operationsNotes: 'erp_operationsNotes'
+    };
+    // Load initial data from localStorage
+    let maintenanceTasks = JSON.parse(localStorage.getItem(STORAGE_KEYS.maintenanceTasks) || '[]');
+    let inventoryParts = JSON.parse(localStorage.getItem(STORAGE_KEYS.inventory) || '[]');
+    let financeNotes = localStorage.getItem(STORAGE_KEYS.financeNotes) || '';
+    let operationsNotes = localStorage.getItem(STORAGE_KEYS.operationsNotes) || '';
+
+    // Utility: Format currency Rp
+    function formatCurrencyRp(value) {
+      return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    // Navigation
+    const navButtons = document.querySelectorAll('nav .nav-btn');
+    const sections = document.querySelectorAll('.page-section');
+
+    navButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const page = btn.getAttribute('data-page');
+        sections.forEach(section => {
+          section.style.display = section.id === page ? 'block' : 'none';
+        });
+        if (page === 'finance') renderFinance();
+        if (page === 'operations') renderOperations();
+      });
+    });
+
+    // Render maintenance table and summary
+    function renderMaintenance() {
+      const tbody = document.querySelector('#maintenance-table tbody');
+      tbody.innerHTML = '';
+      maintenanceTasks.forEach((task, index) => {
+        const tr = document.createElement('tr');
+
+        const statusClass = {
+          pending: 'pending',
+          inprogress: 'inprogress',
+          completed: 'completed'
+        }[task.status] || 'pending';
+
+        tr.innerHTML = `
+          <td>${task.asset}</td>
+          <td>${task.description}</td>
+          <td>${task.scheduledDate}</td>
+          <td><span class="status ${statusClass}">${task.status.charAt(0).toUpperCase() + task.status.slice(1)}</span></td>
+          <td>${formatCurrencyRp(task.cost)}</td>
+          <td>
+            <button class="action-btn" onclick="editMaintenance(${index})">Edit</button>
+            <button class="action-btn" onclick="deleteMaintenance(${index})" style="background-color:#c0392b;">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateMaintenanceSummary();
+    }
+
+    // Update maintenance summary cards
+    function updateMaintenanceSummary() {
+      const total = maintenanceTasks.length;
+      const pending = maintenanceTasks.filter(t => t.status === 'pending').length;
+      const completed = maintenanceTasks.filter(t => t.status === 'completed').length;
+      const totalCost = maintenanceTasks.reduce((sum, t) => sum + Number(t.cost), 0);
+
+      document.getElementById('total-maintenance').querySelector('h3').textContent = total;
+      document.getElementById('pending-maintenance').querySelector('h3').textContent = pending;
+      document.getElementById('completed-maintenance').querySelector('h3').textContent = completed;
+      document.getElementById('total-maintenance-cost').querySelector('h3').textContent = formatCurrencyRp(totalCost);
+    }
+
+    // Handlers for Add/Edit/Delete maintenance
+
+    const maintenanceForm = document.getElementById('maintenance-form');
+    let editIndex = null;
+
+    maintenanceForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const asset = document.getElementById('asset-name').value.trim();
+      const description = document.getElementById('maintenance-desc').value.trim();
+      const scheduledDate = document.getElementById('maintenance-date').value;
+      const cost = Number(document.getElementById('maintenance-cost').value);
+      const status = document.getElementById('maintenance-status').value;
+
+      if (editIndex === null) {
+        // add new
+        maintenanceTasks.push({ asset, description, scheduledDate, cost, status });
+      } else {
+        // update existing
+        maintenanceTasks[editIndex] = { asset, description, scheduledDate, cost, status };
+        editIndex = null;
+        maintenanceForm.querySelector('button[type=submit]').textContent = 'Add Task';
+      }
+
+      saveMaintenance();
+      maintenanceForm.reset();
+      renderMaintenance();
+      if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'finance') renderFinance();
+      if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'operations') renderOperations();
+    });
+
+    window.editMaintenance = function (index) {
+      const task = maintenanceTasks[index];
+      document.getElementById('asset-name').value = task.asset;
+      document.getElementById('maintenance-desc').value = task.description;
+      document.getElementById('maintenance-date').value = task.scheduledDate;
+      document.getElementById('maintenance-cost').value = task.cost;
+      document.getElementById('maintenance-status').value = task.status;
+      editIndex = index;
+      maintenanceForm.querySelector('button[type=submit]').textContent = 'Update Task';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.deleteMaintenance = function (index) {
+      if (confirm('Are you sure to delete this maintenance task?')) {
+        maintenanceTasks.splice(index, 1);
+        saveMaintenance();
+        renderMaintenance();
+        if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'finance') renderFinance();
+        if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'operations') renderOperations();
+      }
+    }
+
+    function saveMaintenance() {
+      localStorage.setItem(STORAGE_KEYS.maintenanceTasks, JSON.stringify(maintenanceTasks));
+    }
+
+    // Inventory module rendering and handlers
+
+    const inventoryForm = document.getElementById('inventory-form');
+
+    function renderInventory() {
+      const tbody = document.querySelector('#inventory-table tbody');
+      tbody.innerHTML = '';
+      inventoryParts.forEach((part, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${part.name}</td>
+          <td>${part.number}</td>
+          <td>${part.stock}</td>
+          <td>${formatCurrencyRp(part.price)}</td>
+          <td>
+            <button class="action-btn" onclick="editInventory(${index})">Edit</button>
+            <button class="action-btn" onclick="deleteInventory(${index})" style="background-color:#c0392b;">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+      updateInventorySummary();
+    }
+
+    function updateInventorySummary() {
+      const totalParts = inventoryParts.length;
+      const totalStock = inventoryParts.reduce((sum, p) => sum + Number(p.stock), 0);
+      document.getElementById('total-parts').querySelector('h3').textContent = totalParts;
+      document.getElementById('total-stock').querySelector('h3').textContent = totalStock;
+    }
+
+    inventoryForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('part-name').value.trim();
+      const number = document.getElementById('part-number').value.trim();
+      const stock = Number(document.getElementById('stock-qty').value);
+      const price = Number(document.getElementById('unit-price').value);
+
+      // Check if part with same number exists (update case)
+      const existingIndex = inventoryParts.findIndex(p => p.number === number);
+      if (existingIndex > -1) {
+        // Update
+        inventoryParts[existingIndex] = { name, number, stock, price };
+      } else {
+        // Add new
+        inventoryParts.push({ name, number, stock, price });
+      }
+      saveInventory();
+      inventoryForm.reset();
+      renderInventory();
+      if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'operations') renderOperations();
+    });
+
+    window.editInventory = function (index) {
+      const part = inventoryParts[index];
+      document.getElementById('part-name').value = part.name;
+      document.getElementById('part-number').value = part.number;
+      document.getElementById('stock-qty').value = part.stock;
+      document.getElementById('unit-price').value = part.price;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.deleteInventory = function (index) {
+      if (confirm('Are you sure to delete this spare part?')) {
+        inventoryParts.splice(index, 1);
+        saveInventory();
+        renderInventory();
+        if (document.querySelector('nav .nav-btn.active').getAttribute('data-page') === 'operations') renderOperations();
+      }
+    }
+
+    function saveInventory() {
+      localStorage.setItem(STORAGE_KEYS.inventory, JSON.stringify(inventoryParts));
+    }
+
+    // Finance module render and notes save
+
+    function renderFinance() {
+      const totalCost = maintenanceTasks.reduce((sum, t) => sum + Number(t.cost), 0);
+      const now = new Date();
+      const thisMonthCost = maintenanceTasks.filter(t => {
+        const d = new Date(t.scheduledDate);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      }).reduce((sum, t) => sum + Number(t.cost), 0);
+
+      document.getElementById('finance-total-cost').querySelector('h3').textContent = formatCurrencyRp(totalCost);
+      document.getElementById('finance-monthly-cost').querySelector('h3').textContent = formatCurrencyRp(thisMonthCost);
+
+      const notesArea = document.getElementById('finance-notes');
+      notesArea.value = financeNotes;
+    }
+
+    document.getElementById('save-finance-notes').addEventListener('click', () => {
+      financeNotes = document.getElementById('finance-notes').value;
+      localStorage.setItem(STORAGE_KEYS.financeNotes, financeNotes);
+      alert('Finance notes saved.');
+    });
+
+    // Operations module render and notes save
+
+    function renderOperations() {
+      const inProgress = maintenanceTasks.filter(t => t.status === 'inprogress').length;
+      const completed = maintenanceTasks.filter(t => t.status === 'completed').length;
+      const pending = maintenanceTasks.filter(t => t.status === 'pending').length;
+      const availableStock = inventoryParts.reduce((sum, p) => sum + Number(p.stock), 0);
+
+      document.getElementById('op-in-progress').textContent = inProgress;
+      document.getElementById('op-completed').textContent = completed;
+      document.getElementById('op-pending').textContent = pending;
+      document.getElementById('op-available-stock').textContent = availableStock;
+
+      const notesArea = document.getElementById('operations-notes');
+      notesArea.value = operationsNotes;
+    }
+
+    document.getElementById('save-operations-notes').addEventListener('click', () => {
+      operationsNotes = document.getElementById('operations-notes').value;
+      localStorage.setItem(STORAGE_KEYS.operationsNotes, operationsNotes);
+      alert('Operations notes saved.');
+    });
+    document.getElementById('logout-btn').addEventListener('click', function () {
+      localStorage.removeItem('erp_logged_in');
+      window.location.href = 'login.html';
+    });
+    // Initial rendering
+    renderMaintenance();
+    renderInventory();
+
+  </script>
+</body>
+
+</html>
